@@ -10,8 +10,8 @@ import com.example.kotlintest.ui.registretion.RegistrationScreen
 @Composable
 fun navigation() {
     val navController = rememberNavController()
-
-    NavHost(navController = navController, startDestination = "registration") {
+    // ПОКА ЧТО HOME ПОТОМ ПЕРЕККЛЮЧИТЬ НА registretion
+    NavHost(navController = navController, startDestination = "home") {
         composable("registration") { RegistrationScreen(navController) }
         composable("home") { HomeScreen(navController) }
     }
