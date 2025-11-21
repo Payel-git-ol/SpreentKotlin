@@ -1,4 +1,4 @@
-package com.example.kotlintest.validate
+package com.example.kotlintest.ui.validate
 
 fun validatePassword(password: String): Boolean {
     val hasMinLength = password.length >= 6

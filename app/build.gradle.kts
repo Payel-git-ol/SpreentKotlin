@@ -61,4 +61,5 @@ dependencies {
     implementation("io.ktor:ktor-client-okhttp:2.3.12") // или CIO/Android
     implementation("io.ktor:ktor-client-content-negotiation:2.3.12")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.12")
+    implementation("androidx.navigation:navigation-compose:2.8.0")
 }
