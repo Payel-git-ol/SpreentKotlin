@@ -3,10 +3,13 @@ package com.example.kotlintest.api
 import com.example.kotlintest.api.client.client
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
-import io.ktor.client.statement.bodyAsText
 import com.example.kotlintest.BuildConfig
+import com.example.kotlintest.api.models.WeatherResponse
+import com.example.kotlintest.service.WeatherCache
+import io.ktor.client.call.body
 
-suspend fun getWeather(city: String): String {
+suspend fun getWeather(city: String): WeatherResponse {
+    WeatherCache.get(city)?.let { return it }
 
     val apiKey = BuildConfig.OPENWEATHER_API_KEY
 
@@ -15,7 +18,8 @@ suspend fun getWeather(city: String): String {
         parameter("appid", apiKey)
         parameter("units", "metric")
         parameter("lang", "ru")
-    }
+    }.body<WeatherResponse>()
 
-    return response.bodyAsText()
+    return response
 }
+
