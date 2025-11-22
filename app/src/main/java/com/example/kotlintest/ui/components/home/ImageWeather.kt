@@ -87,7 +87,7 @@ fun ImageWeather(city: String) {
                     )
                 }
                 Spacer(Modifier.height(30.dp))
-            } else if (weather.weather[0].description == "облачно с прояснениями") {
+            } else if (weather.weather[0].description == "облачно с прояснениями" || weather.weather[0].description == "небольшая облачность") {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center

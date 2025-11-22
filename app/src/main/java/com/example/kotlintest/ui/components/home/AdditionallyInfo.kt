@@ -115,7 +115,7 @@ fun WeatherInfoCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 2.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp), // Убираем тень
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RectangleShape
     ) {
@@ -131,14 +131,13 @@ fun WeatherInfoCard(
                     imageVector = icon,
                     contentDescription = title,
                     modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
                         text = title,
                         style = styleText.copy(
-                            fontSize = 14.sp
+                            fontSize = 14.sp,
                         )
                     )
                     subtitle?.let {
@@ -146,7 +145,6 @@ fun WeatherInfoCard(
                             text = it,
                             style = styleText.copy(
                                 fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         )
                     }
@@ -156,7 +154,7 @@ fun WeatherInfoCard(
                 text = value,
                 style = styleText.copy(
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
                 )
             )
         }
@@ -173,7 +171,7 @@ fun TemperatureRangeCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 2.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp), // Убираем тень
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RectangleShape
     ) {
@@ -189,13 +187,13 @@ fun TemperatureRangeCard(
                     imageVector = Icons.Default.Thermostat,
                     contentDescription = "Температура",
                     modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    tint = Color.Gray
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = "Температура",
                     style = styleText.copy(
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
                     )
                 )
             }
@@ -205,14 +203,13 @@ fun TemperatureRangeCard(
                         text = "Мин",
                         style = styleText.copy(
                             fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     )
                     Text(
                         text = "${minTemp}°C",
                         style = styleText.copy(
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Medium,
                         )
                     )
                 }
@@ -221,14 +218,13 @@ fun TemperatureRangeCard(
                         text = "Макс",
                         style = styleText.copy(
                             fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     )
                     Text(
                         text = "${maxTemp}°C",
                         style = styleText.copy(
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Medium,
                         )
                     )
                 }
