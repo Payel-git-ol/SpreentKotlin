@@ -9,7 +9,7 @@
 
 <div style="display: flex; gap: 10px;">
   <img src="https://github.com/user-attachments/assets/d1f2182c-3fbd-4846-a778-c4ec2a379d8e" width="250" />
-  <img src="https://github.com/user-attachments/assets/85c47347-bda8-4924-a80a-7479ce937630" width="250" />
+  <img width="486" height="863" alt="image" src="https://github.com/user-attachments/assets/eeaaf41f-3fe6-41db-9b2d-b55e8e21d7e0" />
 </div>
 
 
