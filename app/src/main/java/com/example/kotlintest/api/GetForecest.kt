@@ -5,8 +5,6 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import com.example.kotlintest.BuildConfig
 import com.example.kotlintest.api.models.ForecastResponse
-import com.example.kotlintest.api.models.WeatherResponse
-import com.example.kotlintest.service.WeatherCache
 import io.ktor.client.call.body
 
 suspend fun getForecast(city: String, countryCode: String): ForecastResponse {

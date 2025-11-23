@@ -29,10 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.kotlintest.service.CityManager
-import com.example.kotlintest.service.CityManager.saveDefaults
-
 import com.example.kotlintest.ui.components.header.StudyAppHeader
-import com.example.kotlintest.ui.validate.lists.CityBy
 import com.example.kotlintest.ui.validate.lists.Country
 import com.example.kotlintest.ui.validate.lists.getCitiesForCountry
 import kotlinx.coroutines.CoroutineScope
