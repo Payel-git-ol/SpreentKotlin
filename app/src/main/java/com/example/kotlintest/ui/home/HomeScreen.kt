@@ -30,28 +30,27 @@ import com.example.kotlintest.api.getForecast
 import com.example.kotlintest.api.models.ForecastResponse
 import com.example.kotlintest.service.CityManager
 import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(navController: NavController) {
     val context = LocalContext.current
-    var selectedCity by remember { mutableStateOf("Минск") }
     var forecast by remember { mutableStateOf<ForecastResponse?>(null) }
-    var defaultCity by remember { mutableStateOf("Минск") }
     var isRefreshing by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    var selectedCity by remember { mutableStateOf("Минск") }
+    var selectedCountry by remember { mutableStateOf("BY") }
 
     LaunchedEffect(Unit) {
-        CityManager.getDefaultCity(context).collect { savedCity ->
-            defaultCity = savedCity
-            selectedCity = savedCity
+        CityManager.getDefaults(context).collect { (city, country) ->
+            selectedCity = city
+            selectedCountry = country
         }
     }
 
-    LaunchedEffect(selectedCity) {
-        forecast = try { getForecast(selectedCity) } catch (e: Exception) { null }
+    LaunchedEffect(selectedCity, selectedCountry) {
+        forecast = try { getForecast(selectedCity, selectedCountry) } catch (e: Exception) { null }
     }
 
     SwipeRefresh(
@@ -59,7 +58,7 @@ fun HomeScreen(navController: NavController) {
         onRefresh = {
             scope.launch {
                 isRefreshing = true
-                forecast = try { getForecast(selectedCity) } catch (e: Exception) { null }
+                forecast = try { getForecast(selectedCity, selectedCountry) } catch (e: Exception) { null }
                 isRefreshing = false
             }
         }
@@ -76,7 +75,8 @@ fun HomeScreen(navController: NavController) {
                         StudyAppHeader(title = "Native Weather")
                         Spacer(Modifier.height(30.dp))
 
-                        ImageWeather(city = selectedCity)
+                        ImageWeather(city = selectedCity, countryCode = selectedCountry)
+
 
                         Spacer(Modifier.height(30.dp))
                         forecast?.let {
@@ -86,10 +86,12 @@ fun HomeScreen(navController: NavController) {
                         CityDropdown(
                             text = "Выберите город",
                             selectedCity = selectedCity,
+                            selectedCountry = selectedCountry,
                             onCitySelected = { city ->
                                 selectedCity = city
                             }
                         )
+
                     }
                 }
             }
@@ -97,8 +99,10 @@ fun HomeScreen(navController: NavController) {
             item {
                 AdditionallyInfo(
                     city = selectedCity,
+                    countryCode = selectedCountry,
                     styleText = TextStyle(fontSize = 20.sp)
                 )
+
             }
         }
     }

@@ -28,10 +28,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.kotlintest.service.CityManager.getDefaultCity
-import com.example.kotlintest.service.CityManager.saveDefaultCity
-import com.example.kotlintest.ui.validate.lists.City
+import com.example.kotlintest.service.CityManager
+import com.example.kotlintest.service.CityManager.saveDefaults
+
 import com.example.kotlintest.ui.components.header.StudyAppHeader
+import com.example.kotlintest.ui.validate.lists.CityBy
+import com.example.kotlintest.ui.validate.lists.Country
+import com.example.kotlintest.ui.validate.lists.getCitiesForCountry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,8 +42,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProfileScreen(navController: NavController) {
     var selectedCity by remember { mutableStateOf("Минск") }
-    val cities = City
+    var selectedCountry by remember { mutableStateOf("Беларусь") }
     val context = LocalContext.current
+
+    val cities = getCitiesForCountry(selectedCountry)
 
     Column(
         modifier = Modifier
@@ -58,23 +63,38 @@ fun ProfileScreen(navController: NavController) {
         Spacer(Modifier.height(25.dp))
 
         LaunchedEffect(Unit) {
-            getDefaultCity(context).collect { savedCity ->
-                selectedCity = savedCity
+            CityManager.getDefaults(context).collect { (city, country) ->
+                selectedCity = city
+                selectedCountry = country
             }
         }
 
-        DropdownCityDefault(
-            cities = cities,
-            selectiveCity = selectedCity,
-            onCitySelected = {
-                selectedCity = it
+        DropdownCountryDefault(
+            country = Country,
+            selectiveCountry = selectedCountry,
+            onCountrySelected = { newCountry ->
+                selectedCountry = newCountry
+                // при смене страны сбрасываем город на первый из списка
+                selectedCity = getCitiesForCountry(newCountry).first()
                 CoroutineScope(Dispatchers.IO).launch {
-                    saveDefaultCity(context, it)
+                    CityManager.saveDefaults(context, selectedCity, selectedCountry)
+                }
+            }
+        )
+
+        DropdownCityDefault(
+            cities = getCitiesForCountry(selectedCountry),
+            selectiveCity = selectedCity,
+            onCitySelected = { newCity ->
+                selectedCity = newCity
+                CoroutineScope(Dispatchers.IO).launch {
+                    CityManager.saveDefaults(context, selectedCity, selectedCountry)
                 }
             }
         )
     }
 }
+
 
 
 @Composable
@@ -92,6 +112,46 @@ fun EmailUser(email: String) {
         text = email,
         style = TextStyle(fontSize = 25.sp)
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DropdownCountryDefault(
+    country: List<String>,
+    selectiveCountry: String,
+    onCountrySelected: (String) -> Unit
+) {
+    var expended by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expended,
+        onExpandedChange = { expended = !expended }
+    ) {
+        TextField(
+            value = selectiveCountry,
+            onValueChange = { },
+            readOnly = true,
+            label = { Text("Страна по умолчанию") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expended)
+            },
+            modifier = Modifier.menuAnchor()
+        )
+        ExposedDropdownMenu(
+            expanded = expended,
+            onDismissRequest = { expended = false }
+        ) {
+            country.forEach { city ->
+                DropdownMenuItem(
+                    text = { Text(city) },
+                    onClick = {
+                        onCountrySelected(city)
+                        expended = false
+                    })
+
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -13,15 +13,19 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "se
 
 object CityManager {
     private val DEFAULT_CITY_KEY = stringPreferencesKey("default_city")
+    private val DEFAULT_COUNTRY_KEY = stringPreferencesKey("default_country")
 
-    suspend fun saveDefaultCity(context: Context, city: String) {
+    suspend fun saveDefaults(context: Context, city: String, country: String) {
         context.dataStore.edit { prefs ->
             prefs[DEFAULT_CITY_KEY] = city
+            prefs[DEFAULT_COUNTRY_KEY] = country
         }
     }
 
-    fun getDefaultCity(context: Context): Flow<String> =
+    fun getDefaults(context: Context): Flow<Pair<String, String>> =
         context.dataStore.data.map { prefs ->
-            prefs[DEFAULT_CITY_KEY] ?: "Минск"
+            val city = prefs[DEFAULT_CITY_KEY] ?: "Минск"
+            val country = prefs[DEFAULT_COUNTRY_KEY] ?: "BY"
+            city to country
         }
 }

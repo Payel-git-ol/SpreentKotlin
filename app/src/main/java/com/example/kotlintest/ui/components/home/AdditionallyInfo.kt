@@ -39,11 +39,13 @@ import com.example.kotlintest.api.models.WeatherResponse
 @Composable
 fun AdditionallyInfo(
     city: String,
+    countryCode: String,
     styleText: TextStyle
 ) {
-    val weatherState = produceState<WeatherResponse?>(initialValue = null, city) {
-        value = getWeather(city)
+    val weatherState = produceState<WeatherResponse?>(initialValue = null, city, countryCode) {
+        value = getWeather(city, countryCode)
     }
+
 
     weatherState.value?.let { weather ->
         Column {

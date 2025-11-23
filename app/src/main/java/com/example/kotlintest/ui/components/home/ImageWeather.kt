@@ -29,10 +29,10 @@ import com.example.kotlintest.api.models.WeatherResponse
 import java.util.Calendar
 
 @Composable
-fun ImageWeather(city: String) {
+fun ImageWeather(city: String, countryCode: String) {
     val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-    val weatherState = produceState<WeatherResponse?>(initialValue = null, city) {
-        value = getWeather(city)
+    val weatherState = produceState<WeatherResponse?>(initialValue = null, city, countryCode) {
+        value = getWeather(city, countryCode)
     }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {

@@ -19,19 +19,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.kotlintest.api.getWeather
 import com.example.kotlintest.api.models.WeatherResponse
-import com.example.kotlintest.ui.validate.lists.City
+import com.example.kotlintest.ui.validate.lists.CityBy
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CityDropdown(
     text: String,
     selectedCity: String,
+    selectedCountry: String,
     onCitySelected: (String) -> Unit
 ) {
-    val cities = City
+    val cities = CityBy
     var expanded by remember { mutableStateOf(false) }
     val weatherState = produceState<WeatherResponse?>(initialValue = null, selectedCity) {
-        value = getWeather(selectedCity)
+        value = getWeather(selectedCity, selectedCountry)
+
     }
 
     Column {

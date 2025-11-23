@@ -8,13 +8,13 @@ import com.example.kotlintest.api.models.WeatherResponse
 import com.example.kotlintest.service.WeatherCache
 import io.ktor.client.call.body
 
-suspend fun getWeather(city: String): WeatherResponse {
-    WeatherCache.get(city)?.let { return it }
+suspend fun getWeather(city: String, countryCode: String): WeatherResponse {
+    WeatherCache.get("$city,$countryCode")?.let { return it }
 
     val apiKey = BuildConfig.OPENWEATHER_API_KEY
 
     val response = client.get("https://api.openweathermap.org/data/2.5/weather") {
-        parameter("q", city)
+        parameter("q", "$city,$countryCode")
         parameter("appid", apiKey)
         parameter("units", "metric")
         parameter("lang", "ru")
@@ -22,4 +22,3 @@ suspend fun getWeather(city: String): WeatherResponse {
 
     return response
 }
-
