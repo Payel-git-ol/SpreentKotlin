@@ -9,18 +9,39 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.kotlintest.service.CityManager.getDefaultCity
+import com.example.kotlintest.service.CityManager.saveDefaultCity
+import com.example.kotlintest.ui.validate.lists.City
 import com.example.kotlintest.ui.components.header.StudyAppHeader
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(navController: NavController) {
+    var selectedCity by remember { mutableStateOf("Минск") }
+    val cities = City
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -34,8 +55,27 @@ fun ProfileScreen(navController: NavController) {
         Spacer(Modifier.height(25.dp))
 
         EmailUser(email = "testemail@gmail.com")
+        Spacer(Modifier.height(25.dp))
+
+        LaunchedEffect(Unit) {
+            getDefaultCity(context).collect { savedCity ->
+                selectedCity = savedCity
+            }
+        }
+
+        DropdownCityDefault(
+            cities = cities,
+            selectiveCity = selectedCity,
+            onCitySelected = {
+                selectedCity = it
+                CoroutineScope(Dispatchers.IO).launch {
+                    saveDefaultCity(context, it)
+                }
+            }
+        )
     }
 }
+
 
 @Composable
 fun ImageProfile() {
@@ -52,4 +92,44 @@ fun EmailUser(email: String) {
         text = email,
         style = TextStyle(fontSize = 25.sp)
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DropdownCityDefault(
+    cities: List<String>,
+    selectiveCity: String,
+    onCitySelected: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        TextField(
+            value = selectiveCity,
+            onValueChange = { },
+            readOnly = true,
+            label = { Text("Город по умолчанию") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            modifier = Modifier.menuAnchor()
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            cities.forEach { city ->
+                DropdownMenuItem(
+                    text = { Text(city) },
+                    onClick = {
+                        onCitySelected(city)
+                        expanded = false
+                    })
+
+            }
+        }
+    }
 }

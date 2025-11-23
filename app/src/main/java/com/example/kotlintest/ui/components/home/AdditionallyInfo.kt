@@ -46,60 +46,54 @@ fun AdditionallyInfo(
     }
 
     weatherState.value?.let { weather ->
-        LazyColumn {
-            item {
-                WeatherInfoCard(
-                    title = "Ощущается как",
-                    value = "${weather.main.feels_like}°C",
-                    icon = Icons.Default.Thermostat,
-                    styleText = styleText
-                )
-            }
-            item {
-                WeatherInfoCard(
-                    title = "Влажность",
-                    value = "${weather.main.humidity}%",
-                    icon = Icons.Default.WaterDrop,
-                    styleText = styleText
-                )
-            }
-            item {
-                WeatherInfoCard(
-                    title = "Облачность",
-                    value = "${weather.clouds.all}%",
-                    icon = Icons.Default.Cloud,
-                    styleText = styleText
-                )
-            }
-            item {
-                WeatherInfoCard(
-                    title = "Ветер",
-                    value = "${weather.wind.speed} м/с",
-                    subtitle = "Направление ${weather.wind.deg}°",
-                    icon = Icons.Default.Air,
-                    styleText = styleText
-                )
-            }
-            item {
-                WeatherInfoCard(
-                    title = "Давление",
-                    value = "${weather.main.pressure} гПа",
-                    icon = Icons.Default.Speed,
-                    styleText = styleText
-                )
-            }
-            item {
-                TemperatureRangeCard(
-                    minTemp = weather.main.temp_min,
-                    maxTemp = weather.main.temp_max,
-                    styleText = styleText
-                )
-            }
+        Column {
+            WeatherInfoCard(
+                title = "Ощущается как",
+                value = "${weather.main.feels_like}°C",
+                icon = Icons.Default.Thermostat,
+                styleText = styleText
+            )
+
+            WeatherInfoCard(
+                title = "Влажность",
+                value = "${weather.main.humidity}%",
+                icon = Icons.Default.WaterDrop,
+                styleText = styleText
+            )
+
+            WeatherInfoCard(
+                title = "Облачность",
+                value = "${weather.clouds.all}%",
+                icon = Icons.Default.Cloud,
+                styleText = styleText
+            )
+
+            WeatherInfoCard(
+                title = "Ветер",
+                value = "${weather.wind.speed} м/с",
+                subtitle = "Направление ${weather.wind.deg}°",
+                icon = Icons.Default.Air,
+                styleText = styleText
+            )
+
+            WeatherInfoCard(
+                title = "Давление",
+                value = "${weather.main.pressure} гПа",
+                icon = Icons.Default.Speed,
+                styleText = styleText
+            )
+
+            TemperatureRangeCard(
+                minTemp = weather.main.temp_min,
+                maxTemp = weather.main.temp_max,
+                styleText = styleText
+            )
         }
-    } ?: run {
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
+    } ?: Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
     }
 }
 
