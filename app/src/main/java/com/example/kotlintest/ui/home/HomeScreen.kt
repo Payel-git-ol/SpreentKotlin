@@ -24,10 +24,15 @@ import com.example.kotlintest.ui.components.home.ImageWeather
 import com.example.kotlintest.ui.components.header.StudyAppHeader
 import com.example.kotlintest.ui.components.home.ForecastSlider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import com.example.kotlintest.api.getForecast
 import com.example.kotlintest.api.models.ForecastResponse
 import com.example.kotlintest.service.CityManager
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshState
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(navController: NavController) {
@@ -35,6 +40,8 @@ fun HomeScreen(navController: NavController) {
     var selectedCity by remember { mutableStateOf("Минск") }
     var forecast by remember { mutableStateOf<ForecastResponse?>(null) }
     var defaultCity by remember { mutableStateOf("Минск") }
+    var isRefreshing by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         CityManager.getDefaultCity(context).collect { savedCity ->
@@ -47,42 +54,56 @@ fun HomeScreen(navController: NavController) {
         forecast = try { getForecast(selectedCity) } catch (e: Exception) { null }
     }
 
-    LazyColumn {
-        item {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    StudyAppHeader(title = "Native Weather")
-                    Spacer(Modifier.height(30.dp))
-
-                    ImageWeather(city = selectedCity)
-
-                    Spacer(Modifier.height(30.dp))
-                    forecast?.let {
-                        ForecastSlider(forecast = it)
-                    }
-                    Spacer(Modifier.height(30.dp))
-                    CityDropdown(
-                        text = "Выберите город",
-                        selectedCity = selectedCity,
-                        onCitySelected = { city ->
-                            selectedCity = city
-                        }
-                    )
-                }
+    SwipeRefresh(
+        state = rememberSwipeRefreshState(isRefreshing),
+        onRefresh = {
+            scope.launch {
+                isRefreshing = true
+                forecast = try { getForecast(selectedCity) } catch (e: Exception) { null }
+                isRefreshing = false
             }
         }
+    ) {
+        LazyColumn {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        StudyAppHeader(title = "Native Weather")
+                        Spacer(Modifier.height(30.dp))
 
-        item {
-            AdditionallyInfo(
-                city = selectedCity,
-                styleText = TextStyle(fontSize = 20.sp)
-            )
+                        ImageWeather(city = selectedCity)
+
+                        Spacer(Modifier.height(30.dp))
+                        forecast?.let {
+                            ForecastSlider(forecast = it)
+                        }
+                        Spacer(Modifier.height(30.dp))
+                        CityDropdown(
+                            text = "Выберите город",
+                            selectedCity = selectedCity,
+                            onCitySelected = { city ->
+                                selectedCity = city
+                            }
+                        )
+                    }
+                }
+            }
+
+            item {
+                AdditionallyInfo(
+                    city = selectedCity,
+                    styleText = TextStyle(fontSize = 20.sp)
+                )
+            }
         }
     }
+
+
+
 
 }
